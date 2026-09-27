@@ -1,0 +1,12 @@
+my $s = 'a-b-c';
+$s ~~ s/'-'/+/;
+is $s, 'a+b-c', 's/// replaces the first match';
+my $t = 'a-b-c';
+$t ~~ s:g/'-'/+/;
+is $t, 'a+b+c', ':g replaces them all';
+is 'hello'.subst('l', 'L'), 'heLlo', '.subst returns a new string';
+is 'hello'.subst('l', 'L', :g), 'heLLo', 'with :g, all of them';
+my $word = 'hello';
+$word ~~ tr/el/ip/;
+is $word, 'hippo', 'tr: e becomes i, l becomes p';
+is ('a1b2c3' ~~ m:g/\d/).elems, 3, 'm:g finds every match';

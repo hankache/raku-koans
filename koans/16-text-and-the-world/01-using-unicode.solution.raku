@@ -1,0 +1,10 @@
+is "\x0061", 'a', '\x and a code point';
+is "\c[LATIN SMALL LETTER A]", 'a', '\c and a code point name';
+is "\c[WHITE SMILING FACE]", '☺', 'a smiley';
+is "\x0061\x0301", 'á', 'a plus a combining acute accent is á';
+is 'á'.uniname, 'LATIN SMALL LETTER A WITH ACUTE', 'uniname gives the code point name';
+is-deeply 'á'.NFD.list, (0x61, 0x301), 'NFD decomposes it into its parts';
+my $Δ = 1;
+$Δ++;
+is $Δ, 2, 'Unicode letters can be used in names';
+is 2 + ⅒, 2.1, 'and Unicode numbers in math';

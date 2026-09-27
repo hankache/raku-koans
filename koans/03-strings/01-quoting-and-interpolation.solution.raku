@@ -1,0 +1,10 @@
+my $name = 'Camelia';
+is 'Hello, $name', 'Hello, $name', 'single quotes do not interpolate';
+is "Hello, $name", 'Hello, Camelia', 'double quotes do';
+is "1 + 1 = {1 + 1}", '1 + 1 = 2', 'blocks interpolate too';
+my @list = 1, 2, 3;
+is "Items: @list[]", 'Items: 1 2 3', 'an array interpolates with []';
+is "Don't", "Don't", 'use double quotes when the text has an apostrophe';
+is q{it's here}, "it's here", 'q{ } quotes like single quotes, with any delimiter';
+is qq[Hi $name], 'Hi Camelia', 'qq[ ] quotes like double quotes';
+is "a\tb".chars, 3, '\t is a single tab character';

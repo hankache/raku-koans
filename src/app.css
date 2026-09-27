@@ -1,0 +1,124 @@
+/* Design tokens. Light is "rice paper", dark is "ink". */
+:root {
+  --bg: #f6f2e9;
+  --bg-raised: #fffdf8;
+  --bg-sunken: #efe9dc;
+  --ink: #221d2b;
+  --ink-soft: #5d5568;
+  --ink-faint: #958ca0;
+  --line: #e0d8c8;
+
+  --wing-blue: #2f7fc9;
+  --wing-pink: #d2458c;
+
+  --accent: var(--wing-pink);
+  --amber: #c98a06;
+
+  /* Section colours, taken from the logo: teal, gold, navy, copper, olive, slate. */
+  --sec-1: #3f7f78;
+  --sec-2: #a8822f;
+  --sec-3: #173f4d;
+  --sec-4: #9a6535;
+  --sec-5: #737049;
+  --sec-6: #4e606a;
+  --pass: #2f9a6d;
+  --pass-bg: #e3f3ea;
+  --fail: #c2533a;
+  --fail-bg: #fbeae4;
+  --gold: #d49a0b;
+
+  --code-bg: #fffdf8;
+  --syn-keyword: #a53d8a;
+  --syn-string: #2f7a4f;
+  --syn-number: #b0600c;
+  --syn-variable: #2f6fb5;
+  --syn-comment: #958ca0;
+  --syn-type: #8a6412;
+  --syn-builtin: #2f7f78;
+  --syn-regexp: #b0463a;
+  --syn-blank: #d2458c;
+
+  --shadow: 0 1px 2px rgb(40 30 50 / 0.06), 0 8px 24px rgb(40 30 50 / 0.06);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  color-scheme: light;
+}
+
+/* Dark theme. index.html sets data-theme before the page is drawn: the visitor's saved
+   choice (ThemeToggle.svelte), or else the system setting. */
+:root[data-theme='dark'] {
+  --bg: #15121b;
+  --bg-raised: #1e1a26;
+  --bg-sunken: #110e16;
+  --ink: #efe9f5;
+  --ink-soft: #b3a9c0;
+  --ink-faint: #7a7087;
+  --line: #2e2838;
+  --wing-blue: #6fb0f0;
+  --wing-pink: #f07cb6;
+  --amber: #f5cc4a;
+  --sec-1: #7fbfb5;
+  --sec-2: #e2bf72;
+  --sec-3: #7fb0c4;
+  --sec-4: #d49a66;
+  --sec-5: #b8b27f;
+  --sec-6: #9fb2bd;
+  --pass: #62cf9d;
+  --pass-bg: #173127;
+  --fail: #f08b70;
+  --fail-bg: #3a1f1a;
+  --gold: #f5cc4a;
+  --code-bg: #1a1621;
+  --syn-keyword: #e59ad5;
+  --syn-string: #8fd6a8;
+  --syn-number: #f5b86e;
+  --syn-variable: #8ec3f5;
+  --syn-comment: #7a7087;
+  --syn-type: #e2bf72;
+  --syn-builtin: #7fcfc4;
+  --syn-regexp: #f0907f;
+  --syn-blank: #ff8fc7;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.15; margin: 0; }
+a { color: inherit; }
+code { font-family: var(--font-mono); font-size: 0.92em; }
+/* Show code exactly as typed: no ligatures turning <= into ≤ or => into ⇒. */
+code, kbd, pre, .cm-editor { font-variant-ligatures: none; }
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+  color: var(--ink);
+  padding: 0.45rem 1rem;
+  transition: transform 0.12s, background 0.12s, border-color 0.12s;
+}
+button:hover { border-color: var(--ink-faint); }
+button:active { transform: translateY(1px); }
+button.primary {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  font-weight: 600;
+}
+button:disabled { opacity: 0.55; cursor: progress; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

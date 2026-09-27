@@ -1,0 +1,11 @@
+{
+  "name": "Raku Koans",
+  "short_name": "Raku Koans",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#f6f2e9",
+  "theme_color": "#221d2b",
+  "icons": [
+    { "src": "favicon-192.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,10 @@
+my $scalar = 'one value';
+my @array = 1, 2, 3;
+my %hash = a => 1;
+my &code = { 'ran' };
+is-deeply $scalar.WHAT, Str, '$ holds a single value';
+is-deeply @array.WHAT, Array, '@ holds an Array';
+is-deeply %hash.WHAT, Hash, '% holds a Hash';
+is code(), 'ran', '& holds code you can call';
+my $list = (1, 2, 3);
+is $list.elems, 3, 'a scalar can hold a whole list, as one item';

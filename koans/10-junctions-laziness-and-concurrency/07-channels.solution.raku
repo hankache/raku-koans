@@ -1,0 +1,13 @@
+my $c = Channel.new;
+$c.send($_) for 1..3;
+$c.close;
+is-deeply $c.list.List, (1, 2, 3), 'list reads everything until the channel is closed';
+my $inbox = Channel.new;
+$inbox.send('hello');
+is $inbox.receive, 'hello', 'receive takes one value';
+is-deeply $inbox.poll, Nil, 'poll returns Nil when the channel is empty';
+my $work = Channel.new;
+$work.send($_) for 1..4;
+$work.close;
+my $sum = start { my $total = 0; $total += $_ for $work.list; $total };
+is await($sum), 10, 'a background task consumes the channel';

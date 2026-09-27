@@ -1,0 +1,41 @@
+{
+  "name": "raku-koans",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Raku Koans — walk the path to enlightenment in your browser",
+  "license": "Artistic-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hankache/raku-koans.git"
+  },
+  "scripts": {
+    "fetch-runtime": "node scripts/fetch-runtime.mjs",
+    "build:koans": "node scripts/build-koans.mjs",
+    "check:koans": "node scripts/check-koans.mjs",
+    "predev": "npm run build:koans",
+    "dev": "vite",
+    "prebuild": "npm run build:koans && node -e \"require('fs').copyFileSync('THIRD-PARTY-NOTICES.md', 'public/third-party-notices.txt')\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "notices": "node scripts/third-party-notices.mjs"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tsconfig/svelte": "^5.0.8",
+    "svelte": "^5.57.1",
+    "svelte-check": "^4.7.6",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.1"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.13",
+    "@lezer/highlight": "^1.2.4",
+    "codemirror": "^6.0.2",
+    "idb-keyval": "^6.3.0"
+  }
+}

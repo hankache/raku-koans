@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Same as the header mark (GateMark.svelte): ink gate, amber question mark; light gate on dark tabs. -->
+  <style>
+    .gate { fill: #221d2b; }
+    .q { stroke: #c98a06; fill: none; }
+    .dot { fill: #c98a06; }
+    @media (prefers-color-scheme: dark) {
+      .gate { fill: #efe9f5; }
+      .q { stroke: #f5cc4a; }
+      .dot { fill: #f5cc4a; }
+    }
+  </style>
+  <g class="gate">
+    <path d="M4 10.5 C18 15 46 15 60 10.5 L58 17.5 C45 21 19 21 6 17.5 Z"/>
+    <rect x="30" y="19" width="4" height="7"/>
+    <rect x="9" y="25" width="46" height="4"/>
+    <path d="M15 19.5 H21 L22 58 H14 Z"/>
+    <path d="M43 19.5 H49 L50 58 H42 Z"/>
+  </g>
+  <path class="q" d="M26.5 38.5 A5.5 5.5 0 1 1 34.75 43.26 Q32 44.8 32 47.5 V48.3" stroke-width="3.4" stroke-linecap="round"/>
+  <circle class="dot" cx="32" cy="53.3" r="2.1"/>
+</svg>

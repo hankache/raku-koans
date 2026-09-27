@@ -1,0 +1,50 @@
+name: Deploy to GitHub Pages
+
+# Publishes the site on every push to main, but only if every check passes: a broken koan
+# or a build failure leaves the live site as it was. Can also be run by hand from the
+# Actions tab. Needs Settings → Pages → Source set to "GitHub Actions".
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push waits rather than cancelling one mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Downloads the Raku++ release pinned in runtime.lock.json, verified against its checksums.
+      - run: npm run fetch-runtime
+      # Every blank must fail while unfilled and every solution must pass.
+      - run: npm run check:koans
+      - run: npm run build:koans && npm run check
+      - run: npm run build
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

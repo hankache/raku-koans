@@ -1,0 +1,11 @@
+my $x = 1;
+my $y = $x;
+$x = 2;
+is $y, 1, 'assignment copies the value';
+my $a;
+my $b;
+$b := $a;
+$a = 7;
+is $b, 7, 'after binding, a change through one name shows through the other';
+$b = 8;
+is $a, 8, 'binding works in both directions';

@@ -1,0 +1,11 @@
+my $promise = start { 21 * 2 };
+is await($promise), 42, 'await returns what the code returned';
+is $promise.status, Kept, 'the promise was kept';
+my $broken = start { die 'no' };
+dies-ok { await $broken }, 'awaiting a broken promise rethrows its exception';
+is $broken.status, Broken, 'the promise was broken';
+my @array1 = 0..9;
+my @array2 = 2..11;
+my $p1 = start @array1.map({ is-prime($_ + 1) }).eager;
+my $p2 = start @array2.map({ is-prime($_ - 1) }).eager;
+is (await $p1) eqv (await $p2), True, 'two independent tasks, then compare the results';

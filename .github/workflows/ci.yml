@@ -1,0 +1,26 @@
+name: CI
+
+# Checks pull requests and pushes to other branches. Pushes to main are checked (and then
+# published) by deploy.yml.
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Downloads the Raku++ release pinned in runtime.lock.json from GitHub. Fails if it doesn't
+      # match the checksum published with the release, or the checksums in the lock.
+      - run: npm run fetch-runtime
+      # Every blank must fail while unfilled and every solution must pass, on the same engine as the browser.
+      - run: npm run check:koans
+      - run: npm run build:koans && npm run check
+      - run: npm run build

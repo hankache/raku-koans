@@ -1,0 +1,10 @@
+{
+  "source": "https://github.com/ash/rakupp/releases/tag/v4.0.1",
+  "tag": "v4.0.1",
+  "version": "4.0.1",
+  "zip": "3482931495d22ccfca8975ce34208e8784f7b835079ecd7d6f89a790dfa36313",
+  "files": {
+    "rakujs.js": "826d28963fd0f7e92b3589cc9d6b12b43e1b4c10fb6497eb7a11de327bdb2d44",
+    "rakujs.wasm": "7eec4dda50641de4f2a35961db0f4e3a28e4510603919b27accafa0fb0f6fcf3"
+  }
+}
