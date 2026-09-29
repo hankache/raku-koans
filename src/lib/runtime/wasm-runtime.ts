@@ -1,9 +1,20 @@
-import type { RakuRuntime, RunResult } from './types';
+export interface OutputLine {
+  stream: 'out' | 'err';
+  text: string;
+}
+
+export interface RunResult {
+  rc: number;
+  lines: OutputLine[];
+  /** Set when the program was killed or the interpreter crashed. */
+  aborted?: 'timeout' | 'crash';
+  message?: string;
+}
 
 const WORKER_URL = `${import.meta.env.BASE_URL}runtime/raku-worker.js`;
 
 /** Raku.js in a Web Worker, with a watchdog that kills runaway programs. */
-export class WasmRuntime implements RakuRuntime {
+export class WasmRuntime {
   ready!: Promise<string>;
   private worker!: Worker;
   private nextId = 1;
@@ -23,10 +34,10 @@ export class WasmRuntime implements RakuRuntime {
           case 'loaderror':
             return reject(new Error(data.message));
           case 'done':
-            return this.settle(data.id, { rc: data.rc, lines: data.lines, ms: data.ms });
+            return this.settle(data.id, { rc: data.rc, lines: data.lines });
           case 'crash':
             return this.settle(data.id, {
-              rc: -1, lines: data.lines, ms: 0, aborted: 'crash', message: data.message,
+              rc: -1, lines: data.lines, aborted: 'crash', message: data.message,
             });
         }
       };
@@ -49,7 +60,7 @@ export class WasmRuntime implements RakuRuntime {
         this.worker.terminate();
         this.pending.clear();
         this.spawn();
-        resolve({ rc: -1, lines: [], ms: this.timeoutMs, aborted: 'timeout' });
+        resolve({ rc: -1, lines: [], aborted: 'timeout' });
       }, this.timeoutMs);
       this.pending.set(id, r => {
         clearTimeout(timer);

@@ -3,9 +3,11 @@
 //   • the unsolved koan contains a ___, and every line with a ___ fails on its own
 //     (a blank that passes unfilled, or a crash that hides later blanks, is caught)
 //   • the solution has no ___ and passes every test
+//   • the solution lines up with the koan: the same lines, each ___ alone on its line and
+//     replaced by its answer (the result panel's hidden answer relies on this)
 //   • types are compared with is-deeply: `is` compares strings, and every type object
 //     stringifies to '', so `is $x.WHAT, Int` would accept any type at all
-import { EPILOGUE, readKoans, readPrelude } from './lib/koans.mjs';
+import { EPILOGUE, blanksOf, readKoans, readPrelude } from './lib/koans.mjs';
 import { loadRaku } from './lib/raku-node.mjs';
 
 const raku = await loadRaku();
@@ -38,6 +40,8 @@ for (const section of readKoans()) {
 
     if (koan.solution == null) { fail(koan, 'missing .solution.raku'); continue; }
     if (koan.solution.includes('___')) { fail(koan, 'solution still contains ___'); continue; }
+    const { problems } = blanksOf(koan);
+    if (problems.length) { fail(koan, `does not line up with its solution: ${problems.join('; ')}`); continue; }
     const solved = run(koan.solution);
     if (!passed(solved)) { fail(koan, 'solution does not pass', solved.lines); continue; }
 

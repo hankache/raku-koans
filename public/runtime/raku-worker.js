@@ -6,7 +6,7 @@
 //
 // Protocol:  in  { type: 'run', id, src }
 //            out { type: 'ready', version } | { type: 'loaderror', message }
-//                { type: 'done', id, rc, lines: [{ stream, text }], ms }
+//                { type: 'done', id, rc, lines: [{ stream, text }] }
 //                { type: 'crash', id, message, lines }   (instance rebuilt)
 
 /* global RakuJS */
@@ -31,11 +31,10 @@ self.onmessage = async ({ data }) => {
   await ready;
   if (!Module) return self.postMessage({ type: 'loaderror', message: 'Raku.js failed to load' });
 
-  const t0 = performance.now();
   lines = [];
   try {
     const rc = Module.ccall('rakupp_run', 'number', ['string', 'string'], [data.src, '']);
-    self.postMessage({ type: 'done', id: data.id, rc, lines, ms: Math.round(performance.now() - t0) });
+    self.postMessage({ type: 'done', id: data.id, rc, lines });
   } catch (err) {
     // Deep recursion (RangeError) or an abort leaves the instance in an unknown
     // state: report it and build a fresh one for the next run.

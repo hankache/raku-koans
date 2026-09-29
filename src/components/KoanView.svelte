@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
-  import { koanById, neighbours, runKoan, sectionOf, getRuntime } from '../lib/koans';
+  import { koanById, neighbours, revealAnswer, runKoan, sectionOf, getRuntime } from '../lib/koans';
   import { progress } from '../lib/progress.svelte';
   import type { Report } from '../lib/tap';
   import { inlineCode } from '../lib/inline-code';
@@ -18,11 +18,17 @@
   // so reading it once here is enough (and must not re-run after each save).
   let code = $state(untrack(() => progress.get(id)?.code ?? koanById.get(id)!.code));
   let report = $state<Report | null>(null);
+  let editor: Editor;
   // How far into the koan the last run got (assertions passed before the first failure),
   // and how many more this run got past: drives the encouragement line.
   let reached = 0;
   let gained = $state(0);
   let running = $state(false);
+  // Counts runs, so the editor redraws the failing line's mark after each one.
+  let runs = $state(0);
+  // The line of the answer spot the cursor is on, if any. Only the learner puts it there:
+  // a run clears it, and the cursor then goes to the start of the failing line.
+  let cursorSpot = $state<number | null>(null);
   // Only surfaced if the interpreter fails to load.
   const LOAD_ERROR = 'Could not load the Raku interpreter. Check your connection and reload the page.';
   let runtimeError = $state<string | undefined>();
@@ -34,6 +40,7 @@
   async function run() {
     if (running) return;
     running = true;
+    cursorSpot = null;
     const ranFor = id;
     let r;
     try {
@@ -47,12 +54,17 @@
     }
     if (ranFor !== id) return; // navigated away meanwhile
     report = r;
+    runs++;
     if (r.status !== 'error') {
       const now = r.status === 'passed' ? r.tests.length : r.tests.findIndex(t => !t.ok);
       gained = Math.max(0, now - reached);
       reached = now;
     }
     progress.record(id, code, r.status === 'passed');
+    // Back to the code: the start of the failing line (red stripe), or where you were.
+    // A pass leaves you alone, for the "Next koan" button.
+    if (r.status === 'failed') editor.focusLine(r.failure.line);
+    else if (r.status === 'error') editor.focusLine(r.line);
   }
 
   function reset() {
@@ -65,6 +77,22 @@
   const markLine = $derived(
     report?.status === 'failed' ? report.failure.line : report?.status === 'error' ? report.line : undefined,
   );
+
+  // Where each answer goes, for the editor: the text around each ___ of the koan.
+  const spots = $derived.by(() => {
+    const lines = koan.code.trimEnd().split('\n');
+    return koan.answers.map(a => {
+      const [before, after] = lines[a.line].split('___');
+      return { line: a.line, before, after };
+    });
+  });
+
+  // The hidden answer the result panel offers, for the spot the cursor is on (none if it's right).
+  const hint = $derived.by(() => {
+    if (!cursorSpot || report?.status === 'passed') return null;
+    const found = revealAnswer(koan, code, cursorSpot);
+    return found?.line === cursorSpot ? found : null;
+  });
 </script>
 
 <svelte:head><title>{koan.title} · Raku Koans</title></svelte:head>
@@ -90,8 +118,12 @@
         value={code}
         onchange={c => (code = c)}
         onrun={run}
+        bind:this={editor}
         {markLine}
         markKind={report?.status === 'error' ? 'error' : 'fail'}
+        markRun={runs}
+        {spots}
+        onspot={line => (cursorSpot = line)}
       />
 
       <div class="actions">
@@ -104,7 +136,7 @@
     </div>
 
     <aside>
-      <Meditation {report} {gained} {running} {runtimeError} nextHref={nav.next ? `#/koan/${nav.next.id}` : undefined} />
+      <Meditation {report} {gained} {running} {hint} onuse={() => hint && editor.fillAnswer(hint)} {runtimeError} nextHref={nav.next ? `#/koan/${nav.next.id}` : undefined} />
     </aside>
   </div>
 </article>

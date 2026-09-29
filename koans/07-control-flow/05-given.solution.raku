@@ -8,6 +8,7 @@ sub describe($var) {
 is describe(42), 'less than or equal to 50', 'the first matching when wins';
 is describe(99), 'a big Int', 'when Int matches any integer';
 is describe(99.5), 'huh?', 'default catches everything else: 99.5 is too big and not an Int';
+is describe('x'), 'huh?', 'a string is not a number in 0..50';
 my @said;
 given 42 {
     when 0..50 { @said.push('small'); proceed }

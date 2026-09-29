@@ -1,5 +1,6 @@
 my @array[3];
 is @array.elems, 3, 'a fixed-size array has room for exactly its size';
+dies-ok { @array[3] = 'fourth value' }, 'a fixed-size array refuses a fourth element';
 my @tbl[3;2];
 @tbl[0;0] = 1; @tbl[0;1] = 'x';
 @tbl[1;0] = 2; @tbl[1;1] = 'y';

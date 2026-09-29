@@ -9,3 +9,5 @@ $a = 7;
 is $b, 7, 'after binding, a change through one name shows through the other';
 $b = 8;
 is $a, 8, 'binding works in both directions';
+my Int $bound := 123;
+dies-ok { $bound = 999 }, 'a value bound directly cannot be changed';

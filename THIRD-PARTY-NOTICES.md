@@ -49,16 +49,12 @@ distributed with the site. All three are under the SIL Open Font License 1.1.
 
 ## JavaScript packages
 
-### @codemirror/autocomplete 6.20.3, @codemirror/commands 6.11.1, @codemirror/language 6.12.4, @codemirror/lint 6.9.7, @codemirror/search 6.7.2, @codemirror/state 6.7.6, @codemirror/view 6.43.13, codemirror 6.0.2
+### @codemirror/commands 6.11.1, @codemirror/language 6.12.4, @codemirror/state 6.7.6, @codemirror/view 6.43.13
 
-- @codemirror/autocomplete 6.20.3 (MIT)
 - @codemirror/commands 6.11.1 (MIT)
 - @codemirror/language 6.12.4 (MIT)
-- @codemirror/lint 6.9.7 (MIT)
-- @codemirror/search 6.7.2 (MIT)
 - @codemirror/state 6.7.6 (MIT)
 - @codemirror/view 6.43.13 (MIT)
-- codemirror 6.0.2 (MIT)
 
 ```
 MIT License

@@ -47,6 +47,13 @@
   Code: <a href="https://opensource.org/license/artistic-2-0">Artistic License 2.0</a> ·
   Artwork: <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> ·
   <a href="https://github.com/hankache/raku-koans">GitHub</a>
+  <span class="build">
+    {#if __BUILD__}
+      Version <a href="https://github.com/hankache/raku-koans/commit/{__BUILD__.commit}">{__BUILD__.short}</a> · {__BUILD__.date}
+    {:else}
+      Development build
+    {/if}
+  </span>
 </footer>
 
 <style>
@@ -76,6 +83,8 @@
   main { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
   footer { text-align: center; color: var(--ink-faint); font-size: 0.8rem; padding: 3rem 16px 2rem; }
   footer a { color: var(--ink-soft); }
+  .build { display: block; margin-top: 0.4rem; font-size: 0.72rem; opacity: 0.8; }
+  .build a { color: inherit; }
 
   @media (max-width: 600px) {
     .bar { gap: 0.6rem; }

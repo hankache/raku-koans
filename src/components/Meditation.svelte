@@ -1,6 +1,7 @@
 <!-- The result panel: what the koan is trying to tell you. -->
 <script lang="ts">
   import type { Report } from '../lib/tap';
+  import type { Reveal } from '../lib/koans';
   import LogoGate from './LogoGate.svelte';
 
   interface Props {
@@ -10,8 +11,22 @@
     running: boolean;
     runtimeError?: string;
     nextHref?: string;
+    /** The answer on offer, hidden until the learner reveals it. */
+    hint?: Reveal | null;
+    /** Put the revealed answer into the code. */
+    onuse?: () => void;
   }
-  let { report, gained, running, runtimeError, nextHref }: Props = $props();
+  let { report, gained, running, runtimeError, nextHref, hint, onuse }: Props = $props();
+
+  // Which answer was revealed: a new line or a new answer hides it again.
+  let revealedKey = $state('');
+  const hintKey = $derived(hint ? `${hint.line}:${hint.answer}` : '');
+  const revealed = $derived(hintKey !== '' && revealedKey === hintKey);
+  // Leaving a spot (for another spot, or none) hides its answer again: coming back shows it blurred.
+  $effect(() => {
+    void hintKey;
+    revealedKey = '';
+  });
 
   const CHEERS = [
     'The mist begins to clear.',
@@ -34,12 +49,31 @@
   });
 </script>
 
+{#snippet answer()}
+  {#if hint}
+    <p class="hint">
+      <span class="muted">Stuck? The answer for line {hint.line}:</span>
+      {#if revealed}
+        <code class="answer">{hint.answer}</code>
+        <button class="link" onclick={onuse}>Use it</button>
+      {:else}
+        <button class="spoiler" onclick={() => (revealedKey = hintKey)} aria-label="Reveal the answer for line {hint.line}" title="Click to reveal">
+          <code aria-hidden="true">{hint.answer}</code>
+        </button>
+      {/if}
+    </p>
+  {:else}
+    <p class="small muted">Stuck? Click a <code class="blank">___</code> to see its answer.</p>
+  {/if}
+{/snippet}
+
 <div class="panel {report?.status ?? 'idle'}" aria-live="polite">
   {#if running}
     <p class="lead muted">Meditating…</p>
   {:else if !report}
     <p class="lead muted">Replace each <code class="blank">___</code>, then press <kbd>Run</kbd> or <kbd>Ctrl</kbd>+<kbd>Enter</kbd>.</p>
     {#if runtimeError}<p class="small error-note">{runtimeError}</p>{/if}
+    {@render answer()}
   {:else if report.status === 'passed'}
     <div class="celebrate">
       {#key report}<LogoGate size={112} />{/key}
@@ -57,6 +91,7 @@
     <p class="lead">
       {#if f.blank}Meditate on {f.line ? `line ${f.line}` : 'this'}{:else}Not quite{#if f.line}<span class="line">— line {f.line}</span>{/if}{/if}
     </p>
+    {@render answer()}
     {#if !f.blank && f.actual !== undefined}
       <dl class="compare">
         {#if f.answer !== undefined}<dt>Your answer</dt><dd>{f.answer}</dd>{/if}
@@ -76,6 +111,7 @@
   {:else}
     <p class="lead">Your code has not yet found its form{#if report.line}<span class="line">— line {report.line}</span>{/if}</p>
     <pre class="diag">{report.message}</pre>
+    {@render answer()}
   {/if}
 
   {#if report?.output.length}
@@ -111,6 +147,36 @@
     background: var(--bg-raised);
     border: 1px solid var(--line);
   }
+  .link {
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+  .link:hover { color: var(--accent); }
+  .hint {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.6rem;
+    margin: 0.7rem 0 0;
+    font-size: 0.88rem;
+  }
+  .answer { font-family: var(--font-mono); font-size: 0.95rem; color: var(--ink); overflow-wrap: anywhere; }
+  /* A hidden answer: blurred until clicked, and not selectable or copyable meanwhile. */
+  .spoiler {
+    padding: 0.05rem 0.45rem;
+    border: none;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    cursor: pointer;
+    user-select: none;
+  }
+  .spoiler code { font-family: var(--font-mono); font-size: 0.95rem; color: var(--ink); filter: blur(5px); transition: filter 0.15s; }
+  .spoiler:hover code, .spoiler:focus-visible code { filter: blur(4px); }
   .compare {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);

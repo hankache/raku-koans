@@ -5,6 +5,8 @@ class Human {
 }
 my $john = Human.new(name => 'John', age => 23);
 is $john.age, 23, '$.age has an accessor';
+is so(Human.can('age')), True, '$.age generates an age method';
+is so(Human.can('name')), False, '$!name does not';
 is $john.greet, 'Hi, I am nobody', 'the default new() only sets public attributes: $!name stayed empty';
 throws-like { $john.name }, X::Method::NotFound, '$!name has no accessor: asking for it throws';
 class Citizen {

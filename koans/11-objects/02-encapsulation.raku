@@ -7,6 +7,8 @@ class Human {
 }
 my $john = Human.new(name => 'John', age => 23);
 is $john.age, ___, '$.age has an accessor';
+is so(Human.can('age')), ___, '$.age generates an age method';
+is so(Human.can('name')), ___, '$!name does not';
 is $john.greet, ___, 'the default new() only sets public attributes: $!name stayed empty';
 throws-like { $john.name }, ___, '$!name has no accessor: asking for it throws';
 class Citizen {

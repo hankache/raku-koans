@@ -57,3 +57,35 @@ export function readKoans() {
   }
   return sections;
 }
+
+/**
+ * Lines up a koan with its solution and returns each blank's answer:
+ * { line (0-based), before, after, answer }, where the koan's line is before + ___ + after
+ * and the solution's line is before + answer + after. Also returns the problems that prevent
+ * that: a line count that differs, two blanks on one line, or other lines that differ.
+ */
+export function blanksOf(koan) {
+  const code = koan.code.trimEnd().split('\n');
+  const solution = (koan.solution ?? '').trimEnd().split('\n');
+  const blanks = [];
+  const problems = [];
+  if (code.length !== solution.length) {
+    problems.push(`has ${code.length} lines but its solution has ${solution.length}`);
+    return { blanks, problems };
+  }
+  code.forEach((line, i) => {
+    const parts = line.split('___');
+    if (parts.length > 2) return problems.push(`line ${i + 1} has more than one ___`);
+    if (parts.length === 1) {
+      if (line !== solution[i]) problems.push(`line ${i + 1} differs from the solution but has no ___`);
+      return;
+    }
+    const [before, after] = parts;
+    const s = solution[i];
+    if (!s.startsWith(before) || !s.endsWith(after) || s.length < before.length + after.length) {
+      return problems.push(`line ${i + 1} does not match its solution around the ___`);
+    }
+    blanks.push({ line: i, before, after, answer: s.slice(before.length, s.length - after.length) });
+  });
+  return { blanks, problems };
+}

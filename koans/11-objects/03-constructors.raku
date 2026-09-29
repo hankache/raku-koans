@@ -11,3 +11,4 @@ my $john = Human.new('John', 23);
 is $john.name, ___, 'positional arguments, in order';
 is $john.age, ___, 'bless sets the attributes by name';
 dies-ok ___, 'our new() needs both arguments: try calling it with one';
+dies-ok ___, 'or with too many';

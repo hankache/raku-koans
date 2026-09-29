@@ -5,6 +5,8 @@ is-deeply $var.WHAT, ___, 'a string is a Str';
 $var = 123;
 is-deeply $var.WHAT, ___, 'an untyped variable can hold anything';
 throws-like { my Int $typed = 'Text' }, ___, 'a typed variable refuses the wrong type';
+my Int:D $count = 0;
+dies-ok ___, ':D insists on a defined value';
 my Int @numbers = 1, 2, 3;
 is @numbers.of, ___, 'arrays can be typed too';
 my Cool $cool = 31;

@@ -1,5 +1,5 @@
 // Turns a koan run (TAP from Raku's Test module + stderr) into something to show.
-import type { RunResult } from './runtime/types';
+import type { RunResult } from './runtime/wasm-runtime';
 
 export interface TestResult {
   n: number;
@@ -20,9 +20,9 @@ export interface TestResult {
 }
 
 export type Report =
-  | { status: 'passed'; tests: TestResult[]; output: string[]; ms: number }
-  | { status: 'failed'; tests: TestResult[]; failure: TestResult; output: string[]; ms: number }
-  | { status: 'error'; tests: TestResult[]; message: string; line?: number; output: string[]; ms: number };
+  | { status: 'passed'; tests: TestResult[]; output: string[] }
+  | { status: 'failed'; tests: TestResult[]; failure: TestResult; output: string[] }
+  | { status: 'error'; tests: TestResult[]; message: string; line?: number; output: string[] };
 
 const ANSI = /\x1b\[[0-9;]*m/g;
 const TEST = /^(not )?ok (\d+)(?: - (.*))?$/;
@@ -123,13 +123,12 @@ export function parseRun(result: RunResult, code: string, offset: number): Repor
     }
   }
 
-  const ms = result.ms;
   if (result.aborted === 'timeout') {
-    return { status: 'error', tests, output, ms,
+    return { status: 'error', tests, output,
       message: 'Your code ran for too long and was stopped. Is there an infinite loop?' };
   }
   if (result.aborted === 'crash') {
-    return { status: 'error', tests, output, ms,
+    return { status: 'error', tests, output,
       message: /RangeError|call stack/i.test(result.message ?? '')
         ? 'Recursion went too deep for the browser (about 200 levels is the limit).'
         : `The interpreter crashed: ${result.message}` };
@@ -145,18 +144,18 @@ export function parseRun(result: RunResult, code: string, offset: number): Repor
       if (m?.[1] === 'got') failure.actual = m[2].trim();
     }
     failure.blank = failure.line !== undefined && codeLines[failure.line - 1]?.includes('___');
-    return { status: 'failed', tests, failure, output, ms };
+    return { status: 'failed', tests, failure, output };
   }
   // A compile error or an exception outside of any test.
   if (errors.length && (result.rc !== 0 || !tests.length)) {
     const joined = errors.join('\n');
     const at = joined.match(AT_LINE);
     const message = errors[0].replace(/^===SORRY!=== /, '').replace(/ at line \d+/, '');
-    return { status: 'error', tests, output, ms, message, line: at ? toUserLine(Number(at[1])) : undefined };
+    return { status: 'error', tests, output, message, line: at ? toUserLine(Number(at[1])) : undefined };
   }
 
   if (result.rc !== 0 || !tests.length) {
-    return { status: 'error', tests, output, ms, message: 'The koan did not finish cleanly.' };
+    return { status: 'error', tests, output, message: 'The koan did not finish cleanly.' };
   }
-  return { status: 'passed', tests, output, ms };
+  return { status: 'passed', tests, output };
 }

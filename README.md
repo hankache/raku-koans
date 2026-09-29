@@ -1,16 +1,34 @@
-# Raku Koans
+<p align="center">
+  <img src="public/logo.webp" alt="Raku Koans: a butterfly beside a torii gate framing a question mark" width="200">
+</p>
 
-Learn Raku from syntax to culture through 105 browser-based koans.
+<h1 align="center">Raku Koans</h1>
 
-Each koan is a small Raku program whose tests fail: replace every `___` until they pass, and Raku
-tells you whether you've understood or shows you what it expected. It's test-driven from the
-start: the koans are written with Raku's own `Test` module, so you learn the language and how to
+<p align="center">
+  Learn Raku from syntax to culture through 105 browser-based koans.
+</p>
+
+<p align="center">
+  <strong>▶ <a href="https://hankache.github.io/raku-koans/">Start the path at hankache.github.io/raku-koans</a></strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/hankache/raku-koans/actions/workflows/deploy.yml"><img src="https://github.com/hankache/raku-koans/actions/workflows/deploy.yml/badge.svg" alt="Deploy to GitHub Pages"></a>
+  <a href="https://github.com/ash/rakupp/releases"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fhankache%2Fraku-koans%2Fmain%2Fruntime.lock.json&query=%24.tag&label=Raku%2B%2B" alt="Raku++ version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code-Artistic--2.0-blue" alt="Code licence: Artistic License 2.0"></a>
+  <a href="LICENSE-ARTWORK"><img src="https://img.shields.io/badge/artwork-CC%20BY--SA%204.0-lightgrey" alt="Artwork licence: CC BY-SA 4.0"></a>
+</p>
+
+Each koan is a small Raku program whose tests fail. Replace every `___` until they pass, and Raku
+tells you whether you've got it right or shows you what is expected. 
+
+It's test-driven from the
+start. The koans are written with Raku's `Test` module, so you learn the language and how to
 test it at the same time. 
 
 Raku Koans are inspired by [Ruby Koans](https://www.rubykoans.com/).
 
-Everything runs in your browser on [Raku++](https://github.com/ash/rakupp) compiled to
-WebAssembly (Raku.js). There's nothing to install and no need for accounts and log-ins. Progress is saved in the browser.
+Everything runs in your browser on Raku.js, the [Raku++](https://github.com/ash/rakupp) interpreter compiled to WebAssembly. There's nothing to install and no need for accounts and log-ins. Progress is saved locally in the browser.
 
 ## The path
 
@@ -85,7 +103,7 @@ koans/*.raku ──build-koans──► src/generated/koans.json ──► the a
 
 - **Blanks.** [koans/_prelude.raku](koans/_prelude.raku) makes `___` a unique value and wraps
   every `Test` assertion so that any assertion given a `___` fails, whichever it is (`nok`,
-  `isnt`, `throws-like`, `like`, `cmp-ok`, …). The build folds the prelude onto one line, so error
+  `isnt`, `throws-like`, `like`, `cmp-ok`, etc.). The build folds the prelude onto one line, so error
   line numbers shift by exactly one, and the koan runs inside a block the epilogue closes.
 - **Runaway code.** The interpreter runs a program to completion without pausing, so it runs in
   a Web Worker. After 8 seconds the worker is stopped and replaced
@@ -93,13 +111,10 @@ koans/*.raku ──build-koans──► src/generated/koans.json ──► the a
 - **Results.** [tap.ts](src/lib/tap.ts) reads the test output: which assertions passed, the first
   failure and its line, "your answer" against what Raku computed, subtests, `todo` and `skip`.
 - **Highlighting.** The editor is [CodeMirror 6](https://codemirror.net) with a Raku mode
-  ([raku-mode.ts](src/lib/raku-mode.ts)) ported from Ace's.
+  ([raku-mode.ts](src/lib/raku-mode.ts)) ported from [Ace](https://ace.c9.io/).
 - **Progress** ([progress.svelte.ts](src/lib/progress.svelte.ts)) is stored in the browser's
   IndexedDB. It stays on one device, and clearing the site's data resets it. "Start over" on the
   home page erases it.
-- **Swappable engine.** Everything goes through the `RakuRuntime` interface
-  ([types.ts](src/lib/runtime/types.ts)), so a server-backed runtime running Rakudo could be added
-  for features Raku.js lacks.
 
 ## Writing koans
 
@@ -109,11 +124,11 @@ koans/
   05-lists-and-hashes/
     _section.json              { "title": "Lists and hashes", "blurb": "…" }
     03-hashes.raku              the koan, with ___ blanks
-    03-hashes.solution.raku     the same code, filled in (never shipped to the browser)
+    03-hashes.solution.raku     the same code, filled in (only each blank's answer reaches the browser)
 ```
 
 A koan starts with a title and an intro, followed by Raku code using the `Test` module (`is`,
-`ok`, `is-deeply`, `throws-like`, …):
+`ok`, `is-deeply`, `throws-like`, etc.):
 
 ```raku
 # title: Hashes
@@ -130,6 +145,10 @@ a one-line blurb.
 
 **Rules for blanks:**
 
+- The solution must **line up** with the koan: the same lines, with each `___` replaced by its
+  answer and nothing else changed. The hidden answer in the result panel relies on this, and the
+  checker rejects a koan that doesn't line up.
+- Put **at most one `___` on a line**.
 - Put each `___` **directly as an argument** of an assertion: the expected value, a type, a regex,
   a code block or a named argument. Inside an expression it isn't caught by the prelude, and the
   koan may die instead of failing.
@@ -155,7 +174,7 @@ compared with `is-deeply`.
 ## The Raku interpreter
 
 The interpreter comes from the official [Raku++ releases](https://github.com/ash/rakupp/releases).
-[runtime.lock.json](runtime.lock.json) pins the release (currently v4.0.1) and the checksums of its
+[runtime.lock.json](runtime.lock.json) pins the release and the checksums of its
 files. `npm run fetch-runtime` verifies each download against the checksum published with the
 release and against the lock, and stops if either differs. The interpreter files aren't committed:
 the build fetches them.
@@ -163,7 +182,7 @@ the build fetches them.
 To move to a newer release:
 
 ```sh
-npm run fetch-runtime -- --update     # the latest release, or: --update v4.1.0
+npm run fetch-runtime -- --update     # the latest release, or: --update v5.1.0
 npm run check:koans                   # every koan must still pass before you publish
 ```
 

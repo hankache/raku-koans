@@ -3,6 +3,8 @@ is-deeply $var.WHAT, Str, 'a string is a Str';
 $var = 123;
 is-deeply $var.WHAT, Int, 'an untyped variable can hold anything';
 throws-like { my Int $typed = 'Text' }, X::TypeCheck::Assignment, 'a typed variable refuses the wrong type';
+my Int:D $count = 0;
+dies-ok { $count = Int }, ':D insists on a defined value';
 my Int @numbers = 1, 2, 3;
 is @numbers.of, Int, 'arrays can be typed too';
 my Cool $cool = 31;

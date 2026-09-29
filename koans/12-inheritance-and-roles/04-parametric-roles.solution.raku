@@ -6,9 +6,11 @@ class French does Greeter['Bonjour'] { }
 is English.new.greet('Ann'), 'Hello, Ann', 'one role…';
 is French.new.greet('Ann'), 'Bonjour, Ann', '…two different classes';
 role Box[::T] {
+    has T $.content;
     method holds { T.^name }
 }
 class IntBox does Box[Int] { }
 class StrBox does Box[Str] { }
 is IntBox.new.holds, 'Int', 'the role knows the type it was given…';
 is StrBox.new.holds, 'Str', '…and each class gives its own';
+dies-ok { IntBox.new(content => 'seven') }, 'the type parameter is enforced: try a string';
